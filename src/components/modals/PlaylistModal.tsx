@@ -18,6 +18,7 @@ import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 import { enqueueSnackbar } from "notistack";
+import type { CustomError } from "../../rtk-query/api-interceptor";
 
 interface IFormValues {
   playlistName: string;
@@ -63,7 +64,6 @@ const PlaylistModal = ({
 
   // Functions / handlers
   const onSubmit = async (formValues: IFormValues) => {
-    console.log("form values", formValues);
     let res;
     if (playlistData?._id) {
       res = await updatePlaylist({
@@ -77,6 +77,10 @@ const PlaylistModal = ({
       enqueueSnackbar(res?.data?.message, { variant: "success" });
       reset({ playlistName: "", description: "" });
       handleClose();
+    } else {
+      enqueueSnackbar((res?.error as CustomError)?.data?.message, {
+        variant: "error",
+      });
     }
   };
 
