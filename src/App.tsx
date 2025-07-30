@@ -12,6 +12,15 @@ function App() {
     <BrowserRouter>
       <main>
         <Routes>
+          <Route
+            path="/"
+            element={
+              <PublicRoute>
+                <SigninPage />
+              </PublicRoute>
+            }
+          />
+
           {/* Login Route */}
           <Route
             path="/login"
