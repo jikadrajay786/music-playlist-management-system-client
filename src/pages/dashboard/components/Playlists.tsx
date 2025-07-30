@@ -6,10 +6,11 @@ import {
   CardContent,
   CardMedia,
   Grid,
+  Skeleton,
   Stack,
   Typography,
 } from "@mui/material";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   useDeletePlaylistMutation,
   useGetPlaylistQuery,
@@ -48,11 +49,20 @@ const Playlists = () => {
   });
 
   // API
-  const { data: playlistData } = useGetPlaylistQuery({});
+  const {
+    data: playlistData,
+    isLoading: loadingPlaylist,
+    isFetching: fetchingPlaylist,
+  } = useGetPlaylistQuery({});
   const [
     deletePlaylist,
     { isLoading: deletingPlaylist, isSuccess: playlistDeleted },
   ] = useDeletePlaylistMutation();
+
+  // Constants
+  const loading = useMemo(() => {
+    return loadingPlaylist || fetchingPlaylist;
+  }, [fetchingPlaylist, loadingPlaylist]);
 
   // Functions / handlers
   const handleEventDelegation = useCallback(
@@ -81,7 +91,22 @@ const Playlists = () => {
 
   return (
     <>
-      {playlistData?.data?.length ? (
+      {loading ? (
+        <Box
+          height="100vh"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          bgcolor="background.default"
+        >
+          <Stack spacing={2} width={150}>
+            <Typography variant="h6">Loading...</Typography>
+            <Skeleton variant="rectangular" height={20} />
+            <Skeleton variant="rectangular" height={20} />
+            <Skeleton variant="rectangular" height={20} />
+          </Stack>
+        </Box>
+      ) : playlistData?.data?.length ? (
         <>
           <Stack direction={"row"} justifyContent={"flex-end"} mt={4}>
             <Button
