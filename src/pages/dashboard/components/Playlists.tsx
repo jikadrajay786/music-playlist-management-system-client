@@ -78,7 +78,7 @@ const Playlists = () => {
     },
     [playlistData?.data]
   );
-  const deleteHandler = async () => {
+  const deleteHandler = useCallback(async () => {
     try {
       const res = await deletePlaylist(confirmationModal?.playlistId);
       if (res?.data?.success || playlistDeleted) {
@@ -87,7 +87,7 @@ const Playlists = () => {
     } catch (error) {
       console.log("error in delete playlist:::", error);
     }
-  };
+  }, [confirmationModal?.playlistId, deletePlaylist, playlistDeleted]);
 
   return (
     <>

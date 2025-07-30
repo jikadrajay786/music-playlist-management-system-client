@@ -1,14 +1,13 @@
 import { TextField } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
 
-const RHFTextfield = ({
-  name,
-  placeholder,
-  ...other
-}: {
+interface IRHFTextfieldProps {
   name: string;
   placeholder: string;
-}) => {
+}
+
+const RHFTextfield = ({ name, placeholder, ...other }: IRHFTextfieldProps) => {
+  // Hooks
   const { control } = useFormContext();
 
   return (

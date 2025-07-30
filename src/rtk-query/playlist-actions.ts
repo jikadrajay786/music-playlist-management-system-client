@@ -2,6 +2,7 @@ import { api } from "./api-interceptor";
 
 const playlistApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    // Fetch playlist for current user
     getPlaylist: builder.query({
       providesTags: ["getPlaylist"],
       query: () => ({
@@ -13,7 +14,7 @@ const playlistApi = api.injectEndpoints({
       },
     }),
 
-    // User login endpoint
+    // Create new playlist
     addPlaylist: builder.mutation({
       invalidatesTags: ["getPlaylist"],
       query: (payload) => ({
@@ -26,7 +27,7 @@ const playlistApi = api.injectEndpoints({
       },
     }),
 
-    // User registration endpoint
+    // Update playlist
     updatePlaylist: builder.mutation({
       invalidatesTags: ["getPlaylist"],
       query: (payload) => {
@@ -43,7 +44,7 @@ const playlistApi = api.injectEndpoints({
       },
     }),
 
-    // User registration endpoint
+    // Delete playlist
     deletePlaylist: builder.mutation({
       invalidatesTags: ["getPlaylist"],
       query: (playlistId) => {

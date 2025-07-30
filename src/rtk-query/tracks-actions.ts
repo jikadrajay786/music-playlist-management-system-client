@@ -2,6 +2,7 @@ import { api } from "./api-interceptor";
 
 export const tracksApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    // Search tracks/songs
     searchTracks: builder.query({
       query: (params) => ({
         url: "/tracks/search",
@@ -13,6 +14,7 @@ export const tracksApi = api.injectEndpoints({
       },
     }),
 
+    // Add track/song in playlist
     addToPlaylist: builder.mutation({
       invalidatesTags: ["getPlaylist"],
       query: (payload) => ({

@@ -12,7 +12,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 interface IPlaylistData {
   _id: string;
@@ -25,13 +25,8 @@ interface IPlaylistData {
     artists: { name: string }[];
   }[];
 }
-const PlaylistDetailDrawer = ({
-  drawerOpen,
-  handleDrawerClose,
-  drawerData,
-  setPlaylistModalData,
-  setConfirmationModal,
-}: {
+
+interface IPlaylistDetailsDrawerProps {
   drawerOpen: boolean;
   handleDrawerClose: () => void;
   drawerData: IPlaylistData | null;
@@ -49,21 +44,30 @@ const PlaylistDetailDrawer = ({
     isOpen: boolean;
     playlistId?: string;
   }) => void;
-}) => {
+}
+
+const PlaylistDetailDrawer = ({
+  drawerOpen,
+  handleDrawerClose,
+  drawerData,
+  setPlaylistModalData,
+  setConfirmationModal,
+}: IPlaylistDetailsDrawerProps) => {
   // Constants
   const tracks = useMemo(() => {
     return drawerData?.tracks;
   }, [drawerData?.tracks]);
 
   // Functions / handlers
-  const handleEditClick = () => {
+  const handleEditClick = useCallback(() => {
     handleDrawerClose();
     setPlaylistModalData({ isOpen: true, playlistData: drawerData });
-  };
-  const handleDeleteClick = () => {
+  }, [drawerData, handleDrawerClose, setPlaylistModalData]);
+
+  const handleDeleteClick = useCallback(() => {
     handleDrawerClose();
     setConfirmationModal({ isOpen: true, playlistId: drawerData?._id });
-  };
+  }, [drawerData?._id, handleDrawerClose, setConfirmationModal]);
 
   return (
     <>

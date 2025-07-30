@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   TextField,
   InputAdornment,
@@ -8,21 +8,19 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 
-const SearchBar = ({
-  onSearch,
-  searching,
-}: {
+interface ISearchbarProps {
   onSearch: (data: string) => void;
   searching: boolean;
-}) => {
+}
+const SearchBar = ({ onSearch, searching }: ISearchbarProps) => {
   // Local state
   const [searchText, setSearchText] = useState("");
 
   // Functions / handlers
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     setSearchText("");
     onSearch("");
-  };
+  }, [onSearch]);
 
   return (
     <TextField

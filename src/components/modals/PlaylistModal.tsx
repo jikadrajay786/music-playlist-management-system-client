@@ -16,7 +16,7 @@ import {
 } from "../../rtk-query/playlist-actions";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { enqueueSnackbar } from "notistack";
 import type { CustomError } from "../../rtk-query/api-interceptor";
 
@@ -25,6 +25,17 @@ interface IFormValues {
   description: string;
 }
 
+interface IPlaylistModalProps {
+  open: boolean;
+  handleClose: () => void;
+  playlistData?: {
+    _id: string;
+    playlistName: string;
+    description: string;
+  } | null;
+}
+
+// Validation schema for playlist
 const playlistSchema = Yup.object().shape({
   playlistName: Yup.string()
     .required("Playlist name is required")
@@ -40,15 +51,7 @@ const PlaylistModal = ({
   open,
   handleClose,
   playlistData,
-}: {
-  open: boolean;
-  handleClose: () => void;
-  playlistData?: {
-    _id: string;
-    playlistName: string;
-    description: string;
-  } | null;
-}) => {
+}: IPlaylistModalProps) => {
   // API
   const [addPlaylist, { isLoading: addingPlaylist }] = useAddPlaylistMutation();
   const [updatePlaylist, { isLoading: updatingPlaylist }] =
@@ -63,34 +66,38 @@ const PlaylistModal = ({
   const { handleSubmit, reset } = methods;
 
   // Functions / handlers
-  const onSubmit = async (formValues: IFormValues) => {
-    let res;
-    if (playlistData?._id) {
-      res = await updatePlaylist({
-        ...formValues,
-        playlistId: playlistData?._id,
-      });
-    } else {
-      res = await addPlaylist(formValues);
-    }
-    if (res?.data?.success) {
-      enqueueSnackbar(res?.data?.message, { variant: "success" });
-      reset({ playlistName: "", description: "" });
-      handleClose();
-    } else {
-      enqueueSnackbar((res?.error as CustomError)?.data?.message, {
-        variant: "error",
-      });
-    }
-  };
+  const onSubmit = useCallback(
+    async (formValues: IFormValues) => {
+      let res;
+      if (playlistData?._id) {
+        res = await updatePlaylist({
+          ...formValues,
+          playlistId: playlistData?._id,
+        });
+      } else {
+        res = await addPlaylist(formValues);
+      }
+      if (res?.data?.success) {
+        enqueueSnackbar(res?.data?.message, { variant: "success" });
+        reset({ playlistName: "", description: "" });
+        handleClose();
+      } else {
+        enqueueSnackbar((res?.error as CustomError)?.data?.message, {
+          variant: "error",
+        });
+      }
+    },
+    [addPlaylist, handleClose, playlistData?._id, reset, updatePlaylist]
+  );
 
-  const onClose = () => {
+  const onClose = useCallback(() => {
     if (!addingPlaylist && !updatingPlaylist) {
       reset({ playlistName: "", description: "" });
       handleClose();
     }
-  };
+  }, [addingPlaylist, handleClose, reset, updatingPlaylist]);
 
+  // Effects
   useEffect(() => {
     if (playlistData?._id && playlistData?.playlistName) {
       reset({

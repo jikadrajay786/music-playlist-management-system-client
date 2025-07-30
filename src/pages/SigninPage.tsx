@@ -8,6 +8,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { enqueueSnackbar } from "notistack";
 import type { CustomError } from "../rtk-query/api-interceptor";
+import { useCallback } from "react";
 
 interface IFormValues {
   email: string;
@@ -41,22 +42,24 @@ const SigninPage = () => {
   const { handleSubmit } = methods;
 
   // functions / handlers
-  const onSubmit = async (formValues: IFormValues) => {
-    const res = await login(formValues);
-    console.log("res of login", res);
-    if (res?.data?.success) {
-      localStorage.setItem("accessToken", res.data.data.accessToken);
-      localStorage.setItem("refreshToken", res.data.data.refreshToken);
-      navigate("/dashboard");
-    } else {
-      enqueueSnackbar(
-        (res?.error as CustomError)?.data?.message || "Unable to do login",
-        {
-          variant: "error",
-        }
-      );
-    }
-  };
+  const onSubmit = useCallback(
+    async (formValues: IFormValues) => {
+      const res = await login(formValues);
+      if (res?.data?.success) {
+        localStorage.setItem("accessToken", res.data.data.accessToken);
+        localStorage.setItem("refreshToken", res.data.data.refreshToken);
+        navigate("/dashboard");
+      } else {
+        enqueueSnackbar(
+          (res?.error as CustomError)?.data?.message || "Unable to do login",
+          {
+            variant: "error",
+          }
+        );
+      }
+    },
+    [login, navigate]
+  );
   return (
     <Container
       maxWidth="xs"
@@ -77,7 +80,7 @@ const SigninPage = () => {
           textAlign={"center"}
           mb={4}
         >
-          Log in to start listenining
+          Log in to start listening
         </Typography>
         <RHFFormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2}>

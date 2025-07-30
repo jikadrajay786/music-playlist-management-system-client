@@ -7,17 +7,15 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import ProfileMenu from "./ProfileMenu";
 import SearchBar from "./SearchBar";
 
-function TopNavbar({
-  setSearchText,
-  searching
-}: {
+interface ITopNavbarProps {
   setSearchText: (data: string) => void;
-  searching:boolean
-}) {
+  searching: boolean;
+}
+function TopNavbar({ setSearchText, searching }: ITopNavbarProps) {
   // Hooks
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -26,15 +24,16 @@ function TopNavbar({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   // Constants
-  const open = Boolean(anchorEl);
+  const open = useMemo(() => Boolean(anchorEl), [anchorEl]);
 
   // Functions / handlers
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleClick = useCallback((event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
+  }, []);
+
+  const handleClose = useCallback(() => {
     setAnchorEl(null);
-  };
+  }, []);
 
   return (
     <AppBar
@@ -50,7 +49,6 @@ function TopNavbar({
         direction={{ xs: "row", sm: "row" }}
         justifyContent={"space-between"}
         alignItems={"center"}
-        // pb={matches ? 2 : 0}
       >
         <IconButton>
           <NoiseAware fontSize="large" />

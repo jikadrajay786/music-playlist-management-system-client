@@ -7,6 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useRegisterMutation } from "../rtk-query/auth-actions";
 import { enqueueSnackbar } from "notistack";
+import { useCallback } from "react";
 
 interface IFormValues {
   userName: string;
@@ -48,20 +49,21 @@ const SignupPage = () => {
   const { handleSubmit, reset } = methods;
 
   // Functions / handlers
-  const onSubmit = async (formValues: IFormValues) => {
-    const res = await register(formValues);
-    console.log("form values", formValues, res);
+  const onSubmit = useCallback(
+    async (formValues: IFormValues) => {
+      const res = await register(formValues);
 
-    if (res?.data?.success) {
-      // navigate("/dashboard");
-      enqueueSnackbar(res?.data?.message, { variant: "success" });
-      reset({
-        userName: "",
-        email: "",
-        password: "",
-      });
-    }
-  };
+      if (res?.data?.success) {
+        enqueueSnackbar(res?.data?.message, { variant: "success" });
+        reset({
+          userName: "",
+          email: "",
+          password: "",
+        });
+      }
+    },
+    [register, reset]
+  );
   return (
     <Container
       maxWidth="xs"

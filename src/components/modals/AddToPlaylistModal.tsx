@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useGetPlaylistQuery } from "../../rtk-query/playlist-actions";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { CloseOutlined } from "@mui/icons-material";
 import { useAddToPlaylistMutation } from "../../rtk-query/tracks-actions";
 import { enqueueSnackbar } from "notistack";
@@ -20,15 +20,16 @@ interface ITrack {
   album: { name: string };
   artists: { name: string }[];
 }
+interface IAddToPlaylistModalProps {
+  isOpen: boolean;
+  handleClose: () => void;
+  track: ITrack | null;
+}
 const AddToPlaylistModal = ({
   isOpen,
   handleClose,
   track,
-}: {
-  isOpen: boolean;
-  handleClose: () => void;
-  track: ITrack | null;
-}) => {
+}: IAddToPlaylistModalProps) => {
   // Local state
   const [addingToPlaylist, setAddingToPlaylist] = useState<{
     loading: boolean;
@@ -42,29 +43,32 @@ const AddToPlaylistModal = ({
   const { data: playlistData } = useGetPlaylistQuery({});
   const [addToPlaylist] = useAddToPlaylistMutation();
 
-  // add to playlist add track into playlist
-  const handlePlaylistSelection = async (playlistId: string) => {
-    try {
-      setAddingToPlaylist({ loading: true, playlistId });
+  // Functions / handlers
+  const handlePlaylistSelection = useCallback(
+    async (playlistId: string) => {
+      try {
+        setAddingToPlaylist({ loading: true, playlistId });
 
-      const res = await addToPlaylist({ playlistId, track });
-      if (res?.data?.success) {
-        enqueueSnackbar(res?.data?.message, {
-          variant: "success",
-        });
-        setAddingToPlaylist({ loading: false, playlistId: null });
-        handleClose();
-      } else {
-        enqueueSnackbar((res?.error as CustomError)?.data?.message, {
-          variant: "error",
-        });
+        const res = await addToPlaylist({ playlistId, track });
+        if (res?.data?.success) {
+          enqueueSnackbar(res?.data?.message, {
+            variant: "success",
+          });
+          setAddingToPlaylist({ loading: false, playlistId: null });
+          handleClose();
+        } else {
+          enqueueSnackbar((res?.error as CustomError)?.data?.message, {
+            variant: "error",
+          });
+          setAddingToPlaylist({ loading: false, playlistId: null });
+        }
+      } catch (error) {
+        console.log("error while adding songs to playlist", error);
         setAddingToPlaylist({ loading: false, playlistId: null });
       }
-    } catch (error) {
-      console.log("error while adding songs to playlist", error);
-      setAddingToPlaylist({ loading: false, playlistId: null });
-    }
-  };
+    },
+    [addToPlaylist, handleClose, track]
+  );
   return (
     <Dialog open={isOpen} onClose={handleClose} fullWidth maxWidth="xs">
       <IconButton

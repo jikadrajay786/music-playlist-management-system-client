@@ -8,17 +8,19 @@ import {
   Typography,
 } from "@mui/material";
 
+interface IConfirmationDialogProps {
+  open: boolean;
+  onClose: () => void;
+  deleteHandler: () => void;
+  loading?: boolean;
+}
+
 const ConfirmationDialog = ({
   open,
   onClose,
   deleteHandler,
   loading,
-}: {
-  open: boolean;
-  onClose: () => void;
-  deleteHandler: () => void;
-  loading?: boolean;
-}) => {
+}: IConfirmationDialogProps) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth={"xs"}>
       <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
