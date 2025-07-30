@@ -20,6 +20,8 @@ import PlaylistDetailDrawer from "../../../components/drawers/PlaylistDetailDraw
 import ConfirmationDialog from "../../../components/modals/ConfirmationDialog";
 import album2 from "../../../assets/album2.jpg";
 import album3 from "../../../assets/album3.jpg";
+import { enqueueSnackbar } from "notistack";
+import type { CustomError } from "../../../rtk-query/api-interceptor";
 
 interface IPlaylistData {
   _id: string;
@@ -78,14 +80,23 @@ const Playlists = () => {
     },
     [playlistData?.data]
   );
+
   const deleteHandler = useCallback(async () => {
     try {
       const res = await deletePlaylist(confirmationModal?.playlistId);
       if (res?.data?.success || playlistDeleted) {
         setConfirmationModal({ isOpen: false, playlistId: null });
+        enqueueSnackbar(res?.data?.message, {
+          variant: "success",
+        });
+      } else {
+        enqueueSnackbar((res?.error as CustomError)?.data?.message, {
+          variant: "error",
+        });
       }
     } catch (error) {
       console.log("error in delete playlist:::", error);
+      setConfirmationModal({ isOpen: false, playlistId: null });
     }
   }, [confirmationModal?.playlistId, deletePlaylist, playlistDeleted]);
 

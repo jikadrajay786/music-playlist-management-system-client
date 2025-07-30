@@ -8,6 +8,7 @@ import * as yup from "yup";
 import { useRegisterMutation } from "../rtk-query/auth-actions";
 import { enqueueSnackbar } from "notistack";
 import { useCallback } from "react";
+import type { CustomError } from "../rtk-query/api-interceptor";
 
 interface IFormValues {
   userName: string;
@@ -59,6 +60,10 @@ const SignupPage = () => {
           userName: "",
           email: "",
           password: "",
+        });
+      } else {
+        enqueueSnackbar((res?.error as CustomError)?.data?.message, {
+          variant: "error",
         });
       }
     },
