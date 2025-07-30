@@ -18,8 +18,9 @@ interface IRefreshResponse {
   };
 }
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:4901/api",
-  // "https://music-playlist-management-system-server-qqyg.onrender.com/api",
+  // baseUrl: "http://localhost:4901/api",
+  baseUrl:
+    "https://music-playlist-management-system-server-qqyg.onrender.com/api",
   prepareHeaders: (headers) => {
     const token = localStorage.getItem("accessToken");
     if (token) {
