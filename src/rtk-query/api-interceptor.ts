@@ -39,8 +39,9 @@ const baseQueryWithRefresh: typeof baseQuery = async (
   const errorData = result?.error?.data as { message?: string };
   if (
     api?.endpoint !== "login" &&
-    (result?.error?.status === 401 ||
-      (errorData?.message && errorData.message?.includes("jwt expired")))
+    result?.error?.status === 401 &&
+    errorData?.message &&
+    errorData.message?.includes("jwt expired")
   ) {
     const refreshToken = localStorage.getItem("refreshToken");
 
