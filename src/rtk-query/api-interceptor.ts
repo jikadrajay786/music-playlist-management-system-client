@@ -68,7 +68,7 @@ const baseQueryWithRefresh: typeof baseQuery = async (
       // When refresh also got failed
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
-      window.location.href = "/login";
+      window.location.replace("/login");
     }
   }
 
