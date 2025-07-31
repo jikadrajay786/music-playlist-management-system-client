@@ -22,7 +22,7 @@ const ProfileMenu = ({ anchorEl, open, handleClose }: IProfileMenuProps) => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     dispatch(api.util.resetApiState());
-    navigate("/login", { replace: true });
+    navigate("/login");
   }, [dispatch, handleClose, navigate]);
   return (
     <Menu
