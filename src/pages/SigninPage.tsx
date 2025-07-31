@@ -7,8 +7,9 @@ import { useLoginMutation } from "../rtk-query/auth-actions";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { enqueueSnackbar } from "notistack";
-import type { CustomError } from "../rtk-query/api-interceptor";
+import { api, type CustomError } from "../rtk-query/api-interceptor";
 import { useCallback } from "react";
+import { useDispatch } from "react-redux";
 
 interface IFormValues {
   email: string;
@@ -26,6 +27,7 @@ const loginSchema = yup.object().shape({
 const SigninPage = () => {
   // Hooks
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // API
   const [login, { isLoading }] = useLoginMutation();
@@ -48,6 +50,7 @@ const SigninPage = () => {
       if (res?.data?.success) {
         localStorage.setItem("accessToken", res.data.data.accessToken);
         localStorage.setItem("refreshToken", res.data.data.refreshToken);
+        dispatch(api.util.resetApiState());
         navigate("/dashboard");
       } else {
         enqueueSnackbar(
@@ -58,7 +61,7 @@ const SigninPage = () => {
         );
       }
     },
-    [login, navigate]
+    [dispatch, login, navigate]
   );
   return (
     <Container

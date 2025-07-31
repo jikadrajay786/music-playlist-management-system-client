@@ -1,8 +1,6 @@
 import { ListItemIcon, Menu, MenuItem } from "@mui/material";
 import { Logout } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { api } from "../rtk-query/api-interceptor";
 import { useCallback } from "react";
 
 interface IProfileMenuProps {
@@ -13,7 +11,6 @@ interface IProfileMenuProps {
 
 const ProfileMenu = ({ anchorEl, open, handleClose }: IProfileMenuProps) => {
   // hooks
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // Functions / handlers
@@ -21,9 +18,8 @@ const ProfileMenu = ({ anchorEl, open, handleClose }: IProfileMenuProps) => {
     handleClose();
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-    dispatch(api.util.resetApiState());
     navigate("/login");
-  }, [dispatch, handleClose, navigate]);
+  }, [handleClose, navigate]);
   return (
     <Menu
       anchorEl={anchorEl}
