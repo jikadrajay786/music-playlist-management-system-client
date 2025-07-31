@@ -14,9 +14,17 @@ tech used:
 setup instructions:
 clone this public repo for the frontend
 
-install dependencies using: npm install
-to create build useL: npm run build
-to start app in deve mod run: npm run dev
+Install dependencies
+npm install
+
+Create build
+npm run build
+
+Start app in dev
+npm run dev
+
+For local environment ( if server is running on localhost)
+http://localhost:4901 replace this baseurl in api interceptor file.
 
 Folder structure
 src/
